@@ -1,0 +1,120 @@
+\documentclass[a5paper, 9pt]{memoir}
+\usepackage[layout=a5paper,
+            ignoreall,
+            nomarginpar,
+            centering,
+            margin=5mm,
+            %showframe=true,
+            %showcrop=true,
+            ]{geometry}
+\usepackage{tikz}
+\usepackage{xifthen}
+\usepackage{xstring}
+\setlength{\parindent}{0pt}
+
+\usepackage[T1]{fontenc} % Ligaturen, richtige Umlaute im PDF
+\usepackage[utf8]{inputenc} % UTF8-Kodierung für Umlaute usw
+
+\pgfmathsetseed{\number\pdfrandomseed}
+
+\newcommand{\randomwords}{%
+Ist verwandt mit der Braut/dem Bräutigam;
+Ist das älteste/jüngste Geschwisterkind;
+Ist mehr als 50km angereist;
+Hat einen ausländischen Pass;
+War schon auf mehr als 3 Kontinenten;
+Besitzt 3 oder mehr Kraftfahrzeuge;
+Hat einen Titel;
+Ist mehr als 25 Jahre verheiratet;
+War bei der Bundeswehr;
+Kann auf mindestens 3 Fremdsprachen bis 10 zählen;
+Hat einen Hund;
+Hat eine Katze;
+Kann Steuerfragen beantworten;
+Kennt sich mit Mäusen aus;
+Weiß was bei einer Geburt zu tun ist;
+Hat im letzten Jahr ein Kind bekommen;
+Kennt Braut/Bräutigam seit der Grundschule;
+Hat eine Ziege zur Hochzeit verschenkt;
+Hat diesen Monat Geburtstag;
+Ist Linkshänder;
+Hat das Brautpaar zur eigenen Hochzeit eingeladen;
+Arbeitet mit Braut/Bräutigam;
+Kann ein Instrument spielen;
+Kommt aus einem Ort mit weniger als 15000 Einwohnern;
+Kommt aus einer Stadt mit mehr als 1 000 000 Einwohnern;
+Hat ein Tattoo;
+Trinkt lieber Weißwein als Rotwein;
+Hat Abschlüsse von mehreren Hochschulen;
+Ist kurzsichtig;
+Ist weitsichtig;
+Hat am gleichen Tag Geburtstag wie Braut/Bräutigam;
+Fährt einen Oldtimer;
+Besitzt ein E-Bike;
+Hat Schuhe zum Wechseln dabei;
+Hat eine längere Zeit im Ausland verbracht;
+Kennt mindestens 3 IKEA Möbelstücke mit Namen;
+Hat seine Steuererklärung noch nicht abgegeben;
+Hat mehr als 10 Pflanzen in der Wohnung;
+Weiß was Numismatik ist;
+%Hat Schuhgröße <36/38/40/42/44/>46;
+Ist verlobt;
+Hat ein iPhone;
+Hat ein Android;
+Hat einen Bootsführerschein;
+Hat seine Antwortkarte nicht rechtzeitig abgeschickt;
+Hat eine olympische Medaille;
+Kennt mehr als eine Programmiersprache;
+Hat den gleichen Namen wie eine andere Person auf der Hochzeit;
+	}
+\newcommand{\freifeld}{Hat heute geheiratet}
+
+\pgfmathsetmacro{\cellsize}{2.7}
+\pgfmathtruncatemacro{\gridsize}{5}
+
+\pgfmathtruncatemacro{\fieldcount}{\gridsize*\gridsize-1}
+\pgfmathtruncatemacro{\bingo}{\fieldcount/2}
+\StrCount{\randomwords}{;}[\numwords]
+
+\begin{document}
+\pagestyle{empty}
+\includegraphics{header.pdf}
+%{\Huge\textbf{Hochzeitsbingo}}\hfill {\large Name:\hspace{5cm}
+%\printinunitsof{cm}\prntlen{\textwidth}
+
+\vspace{3mm}
+
+Damit ihr euch alle ein bisschen besser kennenlernt haben wir einen Gesprächsstarter vorbereitet.
+Die meisten der unten gegebenen Beschreibungen treffen auf einen oder mehrere unserer Gäste zu.
+Unterhaltet euch also mit möglichst vielen Leuten.
+Schreibt den Namen der entsprechenden Person in das Feld.
+Jede Person darf nur in einem Feld auftauchen.
+5 richtige Namen in einer Reihe ergeben ein Bingo.
+Unter allen, die ein Bingo haben verlosen wir heute Abend eine kleine Überraschung.
+Vergesst dafür nicht euren Namen auf den Zettel zu schreiben.
+}
+
+\vfill
+    \begin{minipage}{\textwidth}%
+    \centering%
+	\begin{tikzpicture}[every node/.style={align=center, text width=2.4cm}]
+	\foreach \f in {0,...,\fieldcount}
+	{ \pgfmathtruncatemacro{\x}{mod(\f,\gridsize)}
+		\pgfmathtruncatemacro{\y}{div(\f,\gridsize)}
+		\draw ({\x*\cellsize},{\y*\cellsize}) rectangle ({(\x+1)*\cellsize},{(\y+1)*\cellsize});
+		\ifthenelse{\f=\bingo}
+		{   \node at ({(\x+0.5)*\cellsize},{(\y+0.5)*\cellsize}) {\freifeld\\\vfill};
+		}
+		{   \pgfmathtruncatemacro{\maxvalue}{\numwords-1-\f)}
+			\pgfmathtruncatemacro{\myrandom}{random(\maxvalue)}
+			\pgfmathtruncatemacro{\mynextrandom}{\myrandom+1}
+			\StrBetween[\myrandom,\mynextrandom]{\randomwords}{;}{;}[\randomword]
+			\StrDel{\randomwords}{\randomword;}[\randomwords]
+			\xdef\randomwords{\randomwords}
+			%\node at ({(\x+0.5)*\cellsize},{(\y+0.5)*\cellsize}) {\myrandom-\maxvalue-\randomword};
+			\node at ({(\x+0.5)*\cellsize},{(\y+0.5)*\cellsize}) {\randomword};
+		}
+	}
+	\end{tikzpicture}%
+	\end{minipage}
+\end{document}
